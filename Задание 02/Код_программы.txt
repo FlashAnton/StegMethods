@@ -1,0 +1,189 @@
+import cv2, math, numpy as np
+
+"""
+представление файла в виде массива
+"""
+def open_img(name_img):
+    img = cv2.imread(name_img, cv2.IMREAD_COLOR)
+    return img
+
+
+"""
+вывод информации о изображении
+"""
+def print_info(img):
+    print(img)
+    print("Высота:" + str(img.shape[0]))
+    print("Ширина:" + str(img.shape[1]))
+
+
+"""
+Сохранение результата
+"""
+def save_img(name_img, permission):
+    cv2.imwrite(name_img, permission)
+
+
+"""
+Максимальная разность
+"""
+def max_sub_img(img_c,img_s):
+    result = img_c - img_s
+    return result
+
+
+"""
+Средняя абсолютная разность
+"""
+def mid_abs_sub(img_c, img_s):
+    result = (1/(8*8))*sum(sum(sum((img_c - img_s))))
+    return result
+
+
+"""
+Нормированная средняя абсолютная разность
+"""
+def norm_mid_abs_sub(img_c, img_s):
+    result = sum(sum(sum((img_c - img_s))))/sum(sum(sum((img_c))))
+    return result
+
+"""
+Среднеквадратичная ошибка
+"""
+def middle_errore(img_c, img_s):
+    result = (1/8*8)*sum(sum(sum((img_c - img_s)**2)))
+    return result
+
+
+"""
+Нормированная среднеквадратическая ошибка
+"""
+def norm_middle_errore(img_c, img_s):
+    result = sum(sum(sum((img_c - img_s)**2)))/sum(sum(sum((img_c)**2)))
+    return result
+
+
+"""
+L^p - норма
+"""
+def l_norm(img_c, img_s):
+    p = 1
+    result = ((1/8*8)*sum(sum(sum((img_c - img_s)**p))))**(1/p)
+    return result
+
+"""
+Лапласова среднеквадратическая ошибка
+"""
+def lapplace_middle_errore(img_c, img_s):
+    N = len(img_c)
+    d1 = img_c - img_s
+    mse = (1 / N) * d1
+
+    result = sum(sum(sum((img_c - img_s)**2)))/sum(sum(sum((img_c)**2)))
+    return result
+
+"""
+Отношение «сигнал/шум»
+"""
+def ratio_sing_shum(img_c, img_s):
+    result = sum(sum(sum((img_c) ** 2)))/sum(sum(sum((img_c - img_s) ** 2)))
+    return result
+
+
+"""
+Максимальное отношение «сигнал/шум»
+"""
+def max_ratio_sign_shum(img_c, img_s):
+    result = 8*8*sum(sum(sum((img_c) ** 2)))/sum(sum(sum((img_c - img_s) ** 2)))
+    return result
+
+"""
+Качество изображения
+"""
+def quality_img(img_c, img_s):
+    result = 1 - sum(sum(sum((img_c - img_s) ** 2)))/sum(sum(sum((img_c) ** 2)))
+    return result
+
+
+"""
+Нормированная взаимная корреляция
+"""
+def norm_vz_corr(img_c, img_s):
+    result = sum(sum(sum((img_c * img_s))))/sum(sum(sum((img_c) ** 2)))
+    return result
+
+"""
+качество корреляции
+"""
+def quality_vz_corr(img_c, img_s):
+    result = sum(sum(sum((img_c * img_s))))/sum(sum(sum((img_c))))
+    return result
+
+
+"""
+Структурное содержание
+"""
+def struct_soder(img_c, img_s):
+    result = sum(sum(sum((img_c)**2)))/sum(sum(sum((img_s)**2)))
+    return result
+
+"""
+Сигма отношение "сигнал/шум"
+"""
+def PSNR(img_c, img_s):
+    mse = np.mean((img_c - img_s) ** 2)
+    if(mse == 0):
+        return 100
+
+    max_pixel = 255.0
+    result = 20 * math.log10(max_pixel / math.sqrt(mse))
+    return result
+
+
+if __name__ == '__main__':
+    empty_img = open_img("image.bmp")
+    marked_img = open_img("marked.bmp")
+
+    tmp_max_sub_img = max_sub_img(empty_img, marked_img)
+    save_img('pic1.bmp', tmp_max_sub_img)
+
+    tmp_mid_abs_sub = mid_abs_sub(empty_img, marked_img)
+    print('Нормированная средняя абсолютная разность: ', tmp_mid_abs_sub)
+
+    tmp_middle_errore = middle_errore(empty_img, marked_img)
+    print('Среднеквадратичная ошибка: ', tmp_middle_errore)
+
+    tmp_norm_middle_errore = norm_middle_errore(empty_img, marked_img)
+    print('Нормированная среднеквадратическая ошибка: ', tmp_norm_middle_errore)
+
+    tmp_l_norm = l_norm(empty_img, marked_img)
+    print('L^p - норма', tmp_l_norm)
+
+    tmp_lapplace_middle_errore = lapplace_middle_errore(empty_img, marked_img)
+    print('Лапласова среднеквадратическая ошибка: ', tmp_lapplace_middle_errore)
+
+    tmp_ratio_sing_shum = ratio_sing_shum(empty_img, marked_img)
+    print('Отношение «сигнал/шум»: ', tmp_ratio_sing_shum)
+
+    tmp_max_ratio_sign_shum = max_ratio_sign_shum(empty_img, marked_img)
+    print('Максимальное отношение «сигнал/шум»: ', tmp_max_ratio_sign_shum)
+
+    tmp_quality_img = quality_img(empty_img, marked_img)
+    print('Качество изображения: ', tmp_quality_img)
+
+    tmp_norm_vz_corr = norm_vz_corr(empty_img, marked_img)
+    print('Нормированная взаимная корреляция', tmp_norm_vz_corr)
+
+    tmp_quality_vz_corr = quality_vz_corr(empty_img, marked_img)
+    print('Качество корреляции: ', tmp_quality_vz_corr)
+
+    tmp_struct_soder = struct_soder(empty_img, marked_img)
+    print('Структурное содержание', tmp_struct_soder)
+
+    tmp_PSNR = PSNR(empty_img, marked_img)
+    print('Сигма отношение "сигнал/шум": ', tmp_PSNR)
+
+
+
+
+
